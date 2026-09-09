@@ -1,0 +1,89 @@
+.wci-fields .wci-field {
+	margin: 0 0 22px;
+}
+
+.wci-field__label {
+	display: block;
+	font-weight: 600;
+	margin: 0 0 6px;
+	font-size: 13px;
+}
+
+.wci-field .description {
+	margin-top: 4px;
+}
+
+.wci-people {
+	margin: 0 0 26px;
+}
+
+.wci-people__title {
+	margin: 0 0 10px;
+	font-size: 14px;
+}
+
+.wci-people__list {
+	display: grid;
+	gap: 12px;
+}
+
+.wci-person {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+	padding: 12px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #fff;
+}
+
+.wci-person__media {
+	width: 96px;
+	flex: 0 0 96px;
+	text-align: center;
+}
+
+.wci-person__preview {
+	width: 96px;
+	height: 96px;
+	border-radius: 6px;
+	overflow: hidden;
+	background: #f0f0f1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 6px;
+}
+
+.wci-person__preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.wci-person__preview.is-empty::after {
+	content: "\f128";
+	font-family: dashicons;
+	font-size: 28px;
+	color: #a7aaad;
+}
+
+.wci-person__media .button-link {
+	display: inline-block;
+	margin: 0 4px;
+	font-size: 12px;
+}
+
+.wci-person__body {
+	flex: 1 1 auto;
+}
+
+.wci-person__body .wci-person__name {
+	margin-bottom: 8px;
+}
+
+.wci-person__remove {
+	color: #b32d2e;
+	font-size: 12px;
+}
