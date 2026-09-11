@@ -15,6 +15,17 @@
 	--wci-radius: 14px;
 	--wci-gap: 20px;
 	color: var(--wci-text);
+	/* Never let our blocks exceed the theme container. If a theme wraps the
+	   post in a flex/grid parent, its children default to min-width:auto and
+	   the wide carousel track would push the whole page sideways. */
+	min-width: 0;
+	max-width: 100%;
+}
+
+/* Stop the horizontal scroller from creating page-wide overflow, without
+   using overflow:hidden on .wci-single (that would break the sticky aside). */
+.wci-single {
+	overflow-x: clip;
 }
 
 /* ---------- Hero ---------- */
@@ -88,6 +99,10 @@
 	grid-template-columns: minmax(0, 1fr) 320px;
 	gap: 40px;
 	align-items: start;
+}
+
+.wci-single__main {
+	min-width: 0; /* allow the grid column to shrink below its content */
 }
 
 .wci-section {
@@ -239,9 +254,9 @@
 	gap: var(--wci-gap);
 }
 
-.wci-grid--cols-2 { grid-template-columns: repeat(2, 1fr); }
-.wci-grid--cols-3 { grid-template-columns: repeat(3, 1fr); }
-.wci-grid--cols-4 { grid-template-columns: repeat(4, 1fr); }
+.wci-grid--cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.wci-grid--cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.wci-grid--cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
 .wci-card {
 	display: flex;
@@ -327,6 +342,7 @@
 	margin: 56px 0 0;
 	padding: 36px 0 0;
 	border-top: 1px solid var(--wci-border);
+	overflow: hidden; /* clip the scroller — no sticky elements live in here */
 }
 
 .wci-related__head {
@@ -368,14 +384,31 @@
 
 .wci-carousel {
 	position: relative;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
 	overflow: hidden;
+	/* How many cards fill the viewport. Overridden inline by the
+	   --wci-per-view-config the PHP prints, then capped per breakpoint. */
+	--wci-per-view: var(--wci-per-view-config, 4);
+}
+
+.wci-carousel-wrap {
+	min-width: 0;
+	max-width: 100%;
 }
 
 .wci-carousel__track {
 	display: flex;
+	flex-wrap: nowrap;
 	gap: var(--wci-gap);
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
 	overflow-x: auto;
+	overflow-y: hidden;
 	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
 	-webkit-overflow-scrolling: touch;
 	padding-bottom: 10px;
 	scrollbar-width: thin;
@@ -383,13 +416,72 @@
 
 .wci-carousel__track.is-dragging {
 	scroll-snap-type: none;
+	scroll-behavior: auto;
 	cursor: grabbing;
 	user-select: none;
 }
 
-.wci-carousel__track .wci-card {
-	flex: 0 0 280px;
+.wci-carousel__track > .wci-card {
+	flex: 0 0 calc(
+		(100% - (var(--wci-per-view) - 1) * var(--wci-gap)) / var(--wci-per-view)
+	);
 	scroll-snap-align: start;
+}
+
+/* Pagination dots */
+.wci-carousel__dots {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 18px;
+}
+
+.wci-carousel__dot {
+	width: 8px;
+	height: 8px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: var(--wci-border);
+	cursor: pointer;
+	transition: background-color .15s ease, transform .15s ease;
+}
+
+.wci-carousel__dot:hover {
+	background: var(--wci-muted);
+}
+
+.wci-carousel__dot[aria-current="true"] {
+	background: var(--wci-accent);
+	transform: scale(1.4);
+}
+
+/* Standalone (shortcode) carousel controls */
+.wci-carousel__controls {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin: 0 0 14px;
+}
+
+.wci-carousel__nav {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: 1px solid var(--wci-border);
+	background: #fff;
+	font-size: 1.2rem;
+	line-height: 1;
+	cursor: pointer;
+	color: var(--wci-text);
+	transition: background-color .15s ease, border-color .15s ease;
+}
+
+.wci-carousel__nav:hover {
+	background: var(--wci-accent);
+	border-color: var(--wci-accent);
+	color: #fff;
 }
 
 /* ---------- Archive ---------- */
@@ -415,6 +507,12 @@
 }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1200px) {
+	.wci-carousel {
+		--wci-per-view: min(var(--wci-per-view-config, 4), 3);
+	}
+}
+
 @media (max-width: 1024px) {
 	.wci-single__layout {
 		grid-template-columns: 1fr;
@@ -426,7 +524,13 @@
 
 	.wci-grid--cols-3,
 	.wci-grid--cols-4 {
-		grid-template-columns: repeat(2, 1fr);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 820px) {
+	.wci-carousel {
+		--wci-per-view: min(var(--wci-per-view-config, 4), 2);
 	}
 }
 
@@ -443,8 +547,8 @@
 		grid-template-columns: 1fr;
 	}
 
-	.wci-carousel__track .wci-card {
-		flex-basis: 78%;
+	.wci-carousel {
+		--wci-per-view: 1;
 	}
 }
 

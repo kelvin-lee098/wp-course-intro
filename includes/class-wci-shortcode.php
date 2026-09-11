@@ -98,12 +98,17 @@ class WCI_Shortcode {
 	 * @return string
 	 */
 	public function carousel( $atts ) {
+		$defaults = WCI_Template::carousel_defaults();
+
 		$atts = shortcode_atts(
 			array(
-				'limit'   => 12,
-				'orderby' => 'rand',
-				'order'   => 'DESC',
-				'exclude' => '',
+				'limit'    => 12,
+				'orderby'  => 'rand',
+				'order'    => 'DESC',
+				'exclude'  => '',
+				'per_view' => $defaults['per_view'],
+				'interval' => $defaults['interval'],
+				'arrows'   => 'yes',
 			),
 			$atts,
 			'wci_course_carousel'
@@ -118,17 +123,26 @@ class WCI_Shortcode {
 		wp_enqueue_style( 'wci-frontend' );
 		wp_enqueue_script( 'wci-carousel' );
 
+		$settings = WCI_Template::carousel_args(
+			array(
+				'per_view' => $atts['per_view'],
+				'interval' => $atts['interval'],
+			)
+		);
+
+		$show_arrows = in_array( strtolower( (string) $atts['arrows'] ), array( 'yes', 'true', '1' ), true );
+
 		ob_start();
 		?>
-		<div class="wci-carousel" data-wci-carousel data-autoplay="true">
-			<div class="wci-carousel__track">
-				<?php
-				while ( $query->have_posts() ) {
-					$query->the_post();
-					WCI_Template::get_part( 'course-card', array( 'post_id' => get_the_ID() ) );
-				}
-				?>
-			</div>
+		<div class="wci-carousel-wrap">
+			<?php if ( $show_arrows ) : ?>
+				<div class="wci-carousel__controls">
+					<button type="button" class="wci-carousel__nav" data-dir="prev" aria-label="<?php esc_attr_e( 'Trước', 'wp-course-intro' ); ?>">&#8249;</button>
+					<button type="button" class="wci-carousel__nav" data-dir="next" aria-label="<?php esc_attr_e( 'Sau', 'wp-course-intro' ); ?>">&#8250;</button>
+				</div>
+			<?php endif; ?>
+
+			<?php WCI_Template::carousel_markup( $query, $settings ); ?>
 		</div>
 		<?php
 		wp_reset_postdata();

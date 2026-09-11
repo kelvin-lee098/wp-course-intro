@@ -3,7 +3,7 @@
  * Plugin Name:       WP Course Intro
  * Plugin URI:        https://example.com/wp-course-intro
  * Description:        Quản lý và giới thiệu các khóa học: ảnh đại diện, mô tả, nội dung, yêu cầu đầu vào, hình thức học, cam kết đầu ra, giảng viên, trợ giảng và link đăng ký. Kèm trang chi tiết và carousel "khóa học khác".
- * Version:           1.0.1
+ * Version:           1.0.4
  * Requires at least: 5.6
  * Requires PHP:      7.2
  * Author:            ClaudeCode
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WCI_VERSION', '1.0.1' );
+define( 'WCI_VERSION', '1.0.4' );
 define( 'WCI_PLUGIN_FILE', __FILE__ );
 define( 'WCI_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WCI_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
